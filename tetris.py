@@ -45,7 +45,7 @@ def outer_grid(x):
     j = j + 1
   print (" ").join(width)
 
-#Its outputs 1 size bigger than the actual input
+#It outputs 1 size bigger than the actual input
 #Incase any of you wanna test it.
 outer_grid(23)
 
