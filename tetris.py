@@ -19,7 +19,8 @@ class GridClass():
   level: Defines the current level of the grid instance
 
   Attributes include:
-  shape_dict: A dictionary containing a key-value relationship between a level and a list of potential shapes that can be spawned at that level
+  shape_dict: A dictionary containing a key-value relationship between a level and a list of potential shapes that can be spawned at that level. The shapes are split up
+  by a '/' to make splitting the shape when we choose it into a list much easier.
   '''
   shape_dict = {
     1: [".", "./.", "././."],
