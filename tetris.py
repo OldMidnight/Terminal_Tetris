@@ -11,8 +11,7 @@ Maintainers:
 #Functions
 
 #GRID
-
-def create_grid(size = 21):
+def create_grid(size=20):
   grid = []
   grid.append(" " + ("_" * size))
   i = 1
@@ -27,14 +26,38 @@ def create_grid(size = 21):
     i = i + 1
   grid.append(" " + ("-" * size))	
   return grid
-
-create_grid(21)
+  token = grid[0]
 
 def draw_grid(grid):
   for row in grid:
     print "".join(row)
 
-draw_grid(create_grid(21))
+draw_grid(create_grid())
+
+#shapes
+levels = { 
+  1: ["..","...."],
+  2: [".","..","..."],
+  3: [".","..","....","......",],
+  4: [".","..","...","....",".....",".......",]
+  }
+def get_shape(size=len(levels)):
+  import random
+  for num in range(1):
+    n = random.randint(1,size)
+    lvl = levels[n]
+    for shape in range(1):
+	  dot = random.randint(0,(len(lvl) - 1))
+	  shape = list(lvl[dot])
+#add shapes
+
+def draw_shape(token):
+  middle = len(token) / 2
+  token[middle:(middle + len(shape))] = shape
+
+# I know some of the names for the functions are different but this is just for me to test it myself before i change it
+draw_grid(create_grid(draw_shape(get_shape()))
+	
 ######################################################################
 # GLOBAL VARIABLES HERE
 ######################################################################
@@ -46,14 +69,6 @@ draw_grid(create_grid(21))
 ######################################################################
 # GRID HERE
 # I looked up the dimesions of  a rectangle.(x,x + 8)
-''' - - - - - - 
-    |         |
-	|         |
-	|         |
-	|	      |
-	|         |
-    - - - - - -
-'''
 
 #def outer_grid(x):
  # width = ["-"]
@@ -102,4 +117,4 @@ draw_grid(create_grid(21))
 # GAME LOOP HERE
 ######################################################################
 #while running:
- #   show_menu
+#   show_menu
