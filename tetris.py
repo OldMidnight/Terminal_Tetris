@@ -1,129 +1,98 @@
 '''
-Tetris.py
-CA278 Project
+CA278 Project: DOTris: Modified Tetris
 Maintainers:
-    Fareed Idris
-    Kevin Doyle
-    Moses Opebi
-    Tevin Thomas
+Fareed Idris
+Kevin Doyle
+Moses Opebi
+Tevin Thomas
 '''
-######################################################################
-#Functions
 
-#GRID
-def create_grid(size=20):
-  grid = []
-  grid.append(" " + ("_" * size))
-  i = 1
-  while i < size:
-    grid.append([])
-    grid[i].append("|")
-    j = 0
-    while j < size:
-      grid[i].append(' ')
-      j = j + 1
-    grid[i].append("|")
-    i = i + 1
-  grid.append(" " + ("-" * size))	
-  return grid
-  token = grid[0]
+import random
+import os
 
-def draw_grid(grid):
-  for row in grid:
-    print "".join(row)
+class GridClass():
+  '''
+  Describes a Grid Object
+  Properties include:
+  grid: The initial empty list for the grid
+  size: Defines the width of the grid
+  level: Defines the current level of the grid instance
 
-draw_grid(create_grid())
-
-#shapes
-levels = { 
-  1: ["..","...."],
-  2: [".","..","..."],
-  3: [".","..","....","......",],
-  4: [".","..","...","....",".....",".......",]
+  Attributes include:
+  shape_dict: A dictionary containing a key-value relationship between a level and a list of potential shapes that can be spawned at that level
+  '''
+  shape_dict = {
+    1: [".", "./.", "././."],
+    2: ["././.", "./././.", "././././."],
+    3: ["././././.", "./././././.", "././././././."],
+    4: ["././././././.", "./././././././."]
   }
-def get_shape(size=len(levels)):
-  import random
-  for num in range(1):
-    n = random.randint(1,size)
-    lvl = levels[n]
-    for shape in range(1):
-	  dot = random.randint(0,(len(lvl) - 1))
-	  shape = list(lvl[dot])
-#add shapes
+  def __init__(self, grid=[], size=15, level=1):
+    '''
+    The initial constructor for an instance of a GridClass object.
+    Formal parameters include:
+    self: a pointer to the instantialized GridClass object
+    grid: The initial empty list for the grid. This will be populated during initialization. default value = []
+    size: This parameter defines the width of the grid. This can be changed based on settings chosen by the player. default value = 15
+    level: This parameter indicates the initial level of the grid instance. This can be changed based on setting chosen by the player. default value = 1
+    '''
+    self.grid = grid
+    self.size = size
+    self.level = level
+    self.grid.append(" " + ("_" * self.size))
+    i = 1
+    while i < 21:
+      self.grid.append([])
+      self.grid[i].append("|")
+      j = 0
+      while j < self.size:
+        self.grid[i].append(' ')
+        j = j + 1
+      self.grid[i].append("|")
+      i = i + 1
+    self.grid.append(" " + ("-" * self.size))
 
-def draw_shape(token):
-  middle = len(token) / 2
-  token[middle:(middle + len(shape))] = shape
+  def draw(self):
+    '''
+    The draw function of the grid. Anytime this function is called, the screen will be cleared and an updated grid will be redrawn.
+    '''
+    os.system('clear')
+    for row in self.grid:
+      print "".join(row)
 
-# I know some of the names for the functions are different but this is just for me to test it myself before i change it
-draw_grid(create_grid(draw_shape(get_shape()))
-	
-######################################################################
-# GLOBAL VARIABLES HERE
-######################################################################
-#running = True
-######################################################################
-# SHAPES HERE
+  def spawn_shape(self):
+      '''
+      This function is called whenever a shape is needed to be spawned, either at the start of a new game or when a shape lands on a surface.
+      A random number between 0 and the length of the shape dictionary (shape_dict) defined above is chosen. The current level is used to know from
+      what list will a random shape be chosen.
+      The shape is then split by the '/' that separates the dots and returned as a list.
+      The midpoint of the top row of the grid is then calculated. This point is where the first dot of the shape will appear
+      The positions from the midpoint of the top row to the length pf the shape is made equal to the shape.
+      Below is what that operation would result in:
 
-######################################################################
+      top_row                          shape
+        0    1    2    3    4    5 
+      [' ', ' ', ' ', ' ', ' ', ' ']   ['.', '.', '.']
 
-shape_dict = {
- level_1: [".",".","./.","./.","./."]
- level_2: ["./.","./.","././.","./.","././."]
- level_3: ["././.","./.","./././.","././.","./././."]
- level_4: ["./././.","./././.","././.","./././.","."]
-}
+      midpoint = 2
+      len(shape) - 1 = 2
+      top_row[midpoint:midpoint + len(shape) - 1] = shape
+
+      top_row = [' ', ' ', '.', '.', '.', ' ']
+      '''
+
+      shape_num = random.randint(0, len(self.shape_dict[self.level]) - 1)
+      shape = self.shape_dict[self.level][shape_num]
+      shape = shape.split('/')
+      middle_of_row = len(self.grid[1]) / 2
+      self.grid[1][middle_of_row:middle_of_row + len(shape)] = shape
+
+# Testing
+if __name__ == '__main__':
+  grid = GridClass()
+  grid.draw()
+  grid.spawn_shape()
+  grid.draw()
+
           
 
-######################################################################
-# GRID HERE
-# I looked up the dimesions of  a rectangle.(x,x + 8)
-
-#def outer_grid(x):
- # width = ["-"]
-  #lside = ["|"]
-  #rside = ["|"]
-  #spaces = []
-  #i = 0
-  #while i < x:
-   # width.append("-")
-   # spaces.append(" ")
-   # i = i + 1
-  #print (" ").join(width)
-  
-  #j = 0
-  #while j < len(width) + 8:
-   # print (" ").join(lside) + (" ").join(spaces) + (" ").join(rside)
-   # j = j + 1
-  #print (" ").join(width)
-
-#It outputs 1 size bigger than the actual input but it still looks good.
-#Incase any of you wanna test it.
-
-######################################################################
-######################################################################
-# FUNCTIONS HERE
-######################################################################
-#def draw_grid()
-
-#def draw_square()
-
-#def draw_line()
-
-#def draw_complex()
-
-#def get_shape()
-
-#def drop_shape()
-
-#def check_loss()
-
-#def check_win()
-
-#def show_menu()
-
-######################################################################
-# GAME LOOP HERE
-######################################################################
-#while running:
-#   show_menu
