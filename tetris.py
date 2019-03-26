@@ -92,6 +92,7 @@ class GridClass():
       shape = shape.split('/')
       middle_of_row = len(self.grid[1]) / 2
       self.grid[1][middle_of_row:middle_of_row + len(shape)] = shape
+      self.shape_movement()
 
 def select_level():
     print '            S E L E C T   A   D I F F I C U L T Y :            '
@@ -150,7 +151,10 @@ def print_menu():
 while running:
     choice = print_menu()
     if choice == 1:
-        select_level()
+        level = select_level()
+        start_process()
+    elif choice == 3:
+        show_highscores()
     if choice == 3:
         running = False
 
