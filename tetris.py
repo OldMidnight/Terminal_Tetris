@@ -7,6 +7,9 @@ Moses Opebi
 Tevin Thomas
 '''
 
+# Global Variables
+running = True
+
 import random
 import os
 import time
@@ -46,7 +49,8 @@ class GridClass():
   def __init__(self, grid=[], size=15, level=1):
     '''
     The initial constructor for an instance of a GridClass object.
-    Formal parameters include:
+    Formal parameters inc]]reate Grid
+
     self: a pointer to the instantialized GridClass object
     grid: The initial empty list for the grid. This will be populated during initialization. default value = []
     size: This parameter defines the width of the grid. This can be changed based on settings chosen by the player. default value = 15
@@ -118,8 +122,73 @@ class GridClass():
 	  return True
 	else:
 	  return self.shape_movement(next_row)
+      self.shape_movement()
 
-# Testing
+def select_level():
+    print '            S E L E C T   A   D I F F I C U L T Y :            '
+    print ''
+    print '                    [1]        E A S Y                         '
+    print '                    [2]        M E D I U M                     '
+    print '                    [3]        H A R D                         '
+    print '                    [4]        Y O U   W O N T   W I N         '
+    print ''
+    level = raw_input('[ENTER]: ')
+    if level == '1':
+        print 'Taking it easy huh?'
+        time.sleep(2)
+        return 1
+    elif level == '2':
+        print 'Not much of a challenge really.'
+        time.sleep(2)
+        return 2
+    elif level == '3':
+        print "That's More like it!"
+        time.sleep(2)
+        return 3
+    elif level == '4':
+        print 'Abandon hope all ye who have chosen this option...'
+        time.sleep(2)
+        return 4
+
+def print_menu():
+    os.system('clear')
+    print "     ______    ________    ________________     ___ _______    "
+    print "    /      \  /        \  /         /  __  \   /  //  ____/    "
+    print "   /  ____  \/   _____  \/___   ___/  / /  /  /  / \  \__      "
+    print "  /  /   /  /\  /    /  /  /   /  /  _    /  /  /   \    \     "
+    print " /         /  \        /  /   /  /  / \  \  /  / ___/    /     "
+    print "/_________/    \______/  /___/  /__/   \__\/__/ /_______/      "
+    print ''
+    print '                   C A 2 7 8   P R O J E C T                   '
+    print '_______________________________________________________________'
+    print '                        M A D E   B Y :                        '
+    print '                    F A R E E D   I D R I S                    '
+    print '                     M O S E S   O P E B I                     '
+    print '                     K E V I N   D O Y L E                     '
+    print '                    T E V I N   T H O M A S                    '
+    print '_______________________________________________________________'
+    print ''
+    print '                 [1] New Game      [2] Highscores              '
+    print '                            [3] Quit                           '
+    print ''
+    option = input('[ENTER]: ')
+    if option in [1, 2, 3]:
+        return option
+    else:
+        print '[!] Unrecognized Input!'
+        return 3
+
+while running:
+    choice = print_menu()
+    if choice == 1:
+        level = select_level()
+        start_process()
+    elif choice == 3:
+        show_highscores()
+    if choice == 3:
+        running = False
+
+''' Testing
 if __name__ == '__main__':
   grid = GridClass(level=4)
   grid.draw()
@@ -128,3 +197,4 @@ if __name__ == '__main__':
 
 #test          
 
+'''
