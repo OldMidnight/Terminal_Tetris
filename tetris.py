@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 CA278 Project: DOTris: Modified Tetris
 Maintainers:
@@ -23,7 +24,7 @@ class GridClass():
   level: Defines the current level of the grid instance
 
   Attributes include:
-  shape_dict: A dictionary containing a key-value relationship between a level and a list of potential shapes that can be spawned at that level. The shapes are split up
+  level_dict: A dictionary containing a key-value relationship between a level and an object containing the properties of that level
   by a '/' to make splitting the shape when we choose it into a list much easier.
   '''
   
@@ -46,6 +47,8 @@ class GridClass():
     },
   }
   next_shape = False
+  points = 0
+  incoming_shape = ''
   def __init__(self, grid=[], size=15, level=1):
     '''
     The initial constructor for an instance of a GridClass object.
@@ -77,8 +80,10 @@ class GridClass():
     The draw function of the grid. Anytime this function is called, the screen will be cleared and an updated grid will be redrawn.
     '''
     os.system('clear')
+    print 'S C O R E :', str(self.points).center(int(os.environ['COLUMNS']))
     for row in self.grid:
-      print "".join(row)
+      print "".join(row).center(int(os.environ['COLUMNS']))
+    print 'I N C O M I N G   S H A P E :', "".join(self.incoming_shape).center(int(os.environ['COLUMNS']))
 
   def spawn_shape(self):
     '''
@@ -100,38 +105,47 @@ class GridClass():
 
     top_row = [' ', ' ', '.', '.', '.', ' ']
     '''
-
-    shape_num = random.randint(0, len(self.level['shape']) - 1)
-    shape = self.level['shape'][shape_num]
-    shape = shape.split('/')
+    self.next_shape = False
+    if self.incoming_shape == '':
+      current_shape_num = random.randint(0, len(self.level['shape']) - 1)
+      shape = self.level['shape'][current_shape_num].split('/')
+    else:
+      shape = self.incoming_shape
+    next_shape_num = random.randint(0, len(self.level['shape']) - 1)
+    self.incoming_shape = self.level['shape'][next_shape_num].split('/')
     middle_of_row = len(self.grid[1]) / 2
     self.grid[1][middle_of_row:middle_of_row + len(shape)] = shape
+    for a in range(middle_of_row, middle_of_row + len(shape)):
+      self.grid[2][a] = ' '
     self.draw()
-    return self.shape_movement(1)
+    return self.shape_movement(1, middle_of_row, middle_of_row + len(shape))
       
-  def shape_movement(self, current_row):
-	next_row = current_row + 1
-	if next_row == len(self.grid) - 1:
-	  self.next_shape = True
-	else:
-	  temp_row = self.grid[next_row]
-	  self.grid[next_row] = self.grid[current_row]
-	  self.grid[current_row] = temp_row
-	  time.sleep(self.level['speed'])
-	  self.draw()
-	if self.next_shape:
-	  return True
-	else:
-	  return self.shape_movement(next_row)
+  def shape_movement(self, current_row, shape_start_index, shape_end_index):
+    next_row = current_row + 1
+    if next_row == len(self.grid) - 1:
+      self.next_shape = True
+    for a in range(shape_start_index, shape_end_index):
+      if self.grid[next_row][a] == '.':
+          self.next_shape = True
+    if self.next_shape == False:
+      temp_row = self.grid[next_row]
+      self.grid[next_row] = self.grid[current_row]
+      self.grid[current_row] = temp_row
+      time.sleep(self.level['speed'])
+      self.draw()
+    if self.next_shape:
+      return True
+    else:
+      return self.shape_movement(next_row, shape_start_index, shape_end_index)
 
 def select_level():
-    print '            S E L E C T   A   D I F F I C U L T Y :            '
-    print ''
-    print '                    [1]        E A S Y                         '
-    print '                    [2]        M E D I U M                     '
-    print '                    [3]        H A R D                         '
-    print '                    [4]        Y O U   W O N T   W I N         '
-    print ''
+    print '            S E L E C T   A   D I F F I C U L T Y :            '.center(int(os.environ['COLUMNS']))
+    print ''.center(int(os.environ['COLUMNS']))
+    print '                    [1]        E A S Y                         '.center(int(os.environ['COLUMNS']))
+    print '                    [2]        M E D I U M                     '.center(int(os.environ['COLUMNS']))
+    print '                    [3]        H A R D                         '.center(int(os.environ['COLUMNS']))
+    print '                    [4]        Y O U   W O N T   W I N         '.center(int(os.environ['COLUMNS']))
+    print ''.center(int(os.environ['COLUMNS']))
     level = raw_input('[ENTER]: ')
     if level == '1':
         print 'Taking it easy huh?'
@@ -152,25 +166,25 @@ def select_level():
 
 def print_menu():
     os.system('clear')
-    print "     ______    ________    ________________     ___ _______    "
-    print "    /      \  /        \  /         /  __  \   /  //  ____/    "
-    print "   /  ____  \/   _____  \/___   ___/  / /  /  /  / \  \__      "
-    print "  /  /   /  /\  /    /  /  /   /  /  _    /  /  /   \    \     "
-    print " /         /  \        /  /   /  /  / \  \  /  / ___/    /     "
-    print "/_________/    \______/  /___/  /__/   \__\/__/ /_______/      "
-    print ''
-    print '                   C A 2 7 8   P R O J E C T                   '
-    print '_______________________________________________________________'
-    print '                        M A D E   B Y :                        '
-    print '                    F A R E E D   I D R I S                    '
-    print '                     M O S E S   O P E B I                     '
-    print '                     K E V I N   D O Y L E                     '
-    print '                    T E V I N   T H O M A S                    '
-    print '_______________________________________________________________'
-    print ''
-    print '                 [1] New Game      [2] Highscores              '
-    print '                            [3] Quit                           '
-    print ''
+    print "     ______    ________    ________________     ___ _______    ".center(int(os.environ['COLUMNS']))
+    print "    /      \  /        \  /         /  __  \   /  //  ____/    ".center(int(os.environ['COLUMNS']))
+    print "   /  ____  \/   _____  \/___   ___/  / /  /  /  / \  \__      ".center(int(os.environ['COLUMNS']))
+    print "  /  /   /  /\  /    /  /  /   /  /  _    /  /  /   \    \     ".center(int(os.environ['COLUMNS']))
+    print " /         /  \        /  /   /  /  / \  \  /  / ___/    /     ".center(int(os.environ['COLUMNS']))
+    print "/_________/    \______/  /___/  /__/   \__\/__/ /_______/      ".center(int(os.environ['COLUMNS']))
+    print ''.center(int(os.environ['COLUMNS']))
+    print '                   C A 2 7 8   P R O J E C T                   '.center(int(os.environ['COLUMNS']))
+    print '_______________________________________________________________'.center(int(os.environ['COLUMNS']))
+    print '                        M A D E   B Y :                        '.center(int(os.environ['COLUMNS']))
+    print '                    F A R E E D   I D R I S                    '.center(int(os.environ['COLUMNS']))
+    print '                     M O S E S   O P E B I                     '.center(int(os.environ['COLUMNS']))
+    print '                     K E V I N   D O Y L E                     '.center(int(os.environ['COLUMNS']))
+    print '                    T E V I N   T H O M A S                    '.center(int(os.environ['COLUMNS']))
+    print '_______________________________________________________________'.center(int(os.environ['COLUMNS']))
+    print ''.center(int(os.environ['COLUMNS']))
+    print '                 [1] New Game      [2] Highscores              '.center(int(os.environ['COLUMNS']))
+    print '                            [3] Quit                           '.center(int(os.environ['COLUMNS']))
+    print ''.center(int(os.environ['COLUMNS']))
     option = input('[ENTER]: ')
     if option in [1, 2, 3]:
         return option
