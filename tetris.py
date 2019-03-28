@@ -9,6 +9,7 @@ Tevin Thomas
 
 import random
 import os
+import time
 
 class GridClass():
   '''
@@ -22,12 +23,26 @@ class GridClass():
   shape_dict: A dictionary containing a key-value relationship between a level and a list of potential shapes that can be spawned at that level. The shapes are split up
   by a '/' to make splitting the shape when we choose it into a list much easier.
   '''
-  shape_dict = {
-    1: [".", "./.", "././."],
-    2: ["././.", "./././.", "././././."],
-    3: ["././././.", "./././././.", "././././././."],
-    4: ["././././././.", "./././././././."]
+  
+  level_dict = {
+    1: {
+      'shape': [".", "./.", "././."],
+      'speed': 0.75
+    },
+    2: {
+      'shape': ["././.", "./././.", "././././."],
+      'speed': 0.5
+    },
+    3: {
+      'shape': ["././././.", "./././././.", "././././././."],
+      'speed': 0.25
+    },
+    4: {
+      'shape': ["././././././.", "./././././././."],
+      'speed': 0.01
+    },
   }
+  next_shape = False
   def __init__(self, grid=[], size=15, level=1):
     '''
     The initial constructor for an instance of a GridClass object.
@@ -39,7 +54,7 @@ class GridClass():
     '''
     self.grid = grid
     self.size = size
-    self.level = level
+    self.level = self.level_dict[level]
     self.grid.append(" " + ("_" * self.size))
     i = 1
     while i < 21:
@@ -82,15 +97,31 @@ class GridClass():
       top_row = [' ', ' ', '.', '.', '.', ' ']
       '''
 
-      shape_num = random.randint(0, len(self.shape_dict[self.level]) - 1)
-      shape = self.shape_dict[self.level][shape_num]
+      shape_num = random.randint(0, len(self.level['shape']) - 1)
+      shape = self.level['shape'][shape_num]
       shape = shape.split('/')
       middle_of_row = len(self.grid[1]) / 2
       self.grid[1][middle_of_row:middle_of_row + len(shape)] = shape
+      self.shape_movement(1)
+      
+  def shape_movement(self, current_row):
+	next_row = current_row + 1
+	if next_row == len(self.grid) - 1:
+	  self.next_shape = True
+	else:
+	  temp_row = self.grid[next_row]
+	  self.grid[next_row] = self.grid[current_row]
+	  self.grid[current_row] = temp_row
+	  time.sleep(self.level['speed'])
+	  self.draw()
+	if self.next_shape:
+	  return True
+	else:
+	  return self.shape_movement(next_row)
 
 # Testing
 if __name__ == '__main__':
-  grid = GridClass()
+  grid = GridClass(level=4)
   grid.draw()
   grid.spawn_shape()
   grid.draw()
