@@ -62,7 +62,7 @@ class GridClass():
     self.grid = grid
     self.size = size
     self.level = self.level_dict[level]
-    self.grid.append(" " + ("_" * self.size))
+    self.grid.append("_" * self.size)
     i = 1
     while i < 21:
       self.grid.append([])
@@ -73,17 +73,17 @@ class GridClass():
         j = j + 1
       self.grid[i].append("|")
       i = i + 1
-    self.grid.append(" " + ("-" * self.size))
+    self.grid.append("-" * self.size)
 
   def draw(self):
     '''
     The draw function of the grid. Anytime this function is called, the screen will be cleared and an updated grid will be redrawn.
     '''
     os.system('clear')
-    print 'S C O R E :', str(self.points).center(int(os.environ['COLUMNS']))
+    print 'S C O R E :' + str(self.points).center(int(os.environ['COLUMNS']))
     for row in self.grid:
       print "".join(row).center(int(os.environ['COLUMNS']))
-    print 'I N C O M I N G   S H A P E :', "".join(self.incoming_shape).center(int(os.environ['COLUMNS']))
+    print 'I N C O M I N G   S H A P E :' + "".join(self.incoming_shape).center(int(os.environ['COLUMNS']))
 
   def spawn_shape(self):
     '''
@@ -124,8 +124,9 @@ class GridClass():
     next_row = current_row + 1
     if next_row == len(self.grid) - 1:
       self.next_shape = True
-    for a in range(shape_start_index, shape_end_index):
-      if self.grid[next_row][a] == '.':
+    if self.next_shape == False:
+      for a in range(shape_start_index, shape_end_index):
+        if self.grid[next_row][a] == '.':
           self.next_shape = True
     if self.next_shape == False:
       temp_row = self.grid[next_row]
@@ -136,7 +137,17 @@ class GridClass():
     if self.next_shape:
       return True
     else:
-      return self.shape_movement(next_row, shape_start_index, shape_end_index)
+      self.shape_movement(next_row, shape_start_index, shape_end_index)
+  def check_status(self):
+    if '.' in self.grid[1]:
+        return [1]
+    else:
+        i = 1
+        while i < len(self.grid):
+            if ' ' not in self.grid[i]:
+                return [2, i]
+            i += 1
+        return [0]
 
 def select_level():
     print '            S E L E C T   A   D I F F I C U L T Y :            '.center(int(os.environ['COLUMNS']))
@@ -148,19 +159,19 @@ def select_level():
     print ''.center(int(os.environ['COLUMNS']))
     level = raw_input('[ENTER]: ')
     if level == '1':
-        print 'Taking it easy huh?'
+        print 'Taking it easy huh?'.center(int(os.environ['COLUMNS']))
         time.sleep(2)
         return 1
     elif level == '2':
-        print 'Not much of a challenge really.'
+        print 'Not much of a challenge really.'.center(int(os.environ['COLUMNS']))
         time.sleep(2)
         return 2
     elif level == '3':
-        print "That's More like it!"
+        print "That's More like it!".center(int(os.environ['COLUMNS']))
         time.sleep(2)
         return 3
     elif level == '4':
-        print 'Abandon hope all ye who have chosen this option...'
+        print 'Abandon hope all ye who have chosen this option...'.center(int(os.environ['COLUMNS']))
         time.sleep(2)
         return 4
 
@@ -195,14 +206,26 @@ def print_menu():
 def start_process(difficulty):
   game_status = 0
   grid = GridClass(level=difficulty)
-  while game_status != 1:
-    process = grid.spawn_shape()
+  while game_status == 0:
+    grid.spawn_shape()
+    status = grid.check_status()
+    game_status = status[0]
+    if game_status == 2:
+      grid.points += 1
+      #grid.remove_point_row(status[1])
+      #grid.row_sorted = False
+      game_status = 0
+  return game_status
 
+def show_game_over():
+  print ""
 while running:
     choice = print_menu()
     if choice == 1:
         level = select_level()
         start_process(level)
+        show_game_over()
+        running = False
     elif choice == 3:
         show_highscores()
     if choice == 3:
