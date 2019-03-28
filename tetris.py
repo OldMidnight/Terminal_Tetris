@@ -81,32 +81,33 @@ class GridClass():
       print "".join(row)
 
   def spawn_shape(self):
-      '''
-      This function is called whenever a shape is needed to be spawned, either at the start of a new game or when a shape lands on a surface.
-      A random number between 0 and the length of the shape dictionary (shape_dict) defined above is chosen. The current level is used to know from
-      what list will a random shape be chosen.
-      The shape is then split by the '/' that separates the dots and returned as a list.
-      The midpoint of the top row of the grid is then calculated. This point is where the first dot of the shape will appear
-      The positions from the midpoint of the top row to the length pf the shape is made equal to the shape.
-      Below is what that operation would result in:
+    '''
+    This function is called whenever a shape is needed to be spawned, either at the start of a new game or when a shape lands on a surface.
+    A random number between 0 and the length of the shape dictionary (shape_dict) defined above is chosen. The current level is used to know from
+    what list will a random shape be chosen.
+    The shape is then split by the '/' that separates the dots and returned as a list.
+    The midpoint of the top row of the grid is then calculated. This point is where the first dot of the shape will appear
+    The positions from the midpoint of the top row to the length pf the shape is made equal to the shape.
+    Below is what that operation would result in:
 
-      top_row                          shape
-        0    1    2    3    4    5 
-      [' ', ' ', ' ', ' ', ' ', ' ']   ['.', '.', '.']
+    top_row                          shape
+      0    1    2    3    4    5 
+    [' ', ' ', ' ', ' ', ' ', ' ']   ['.', '.', '.']
 
-      midpoint = 2
-      len(shape) - 1 = 2
-      top_row[midpoint:midpoint + len(shape) - 1] = shape
+    midpoint = 2
+    len(shape) - 1 = 2
+    top_row[midpoint:midpoint + len(shape) - 1] = shape
 
-      top_row = [' ', ' ', '.', '.', '.', ' ']
-      '''
+    top_row = [' ', ' ', '.', '.', '.', ' ']
+    '''
 
-      shape_num = random.randint(0, len(self.level['shape']) - 1)
-      shape = self.level['shape'][shape_num]
-      shape = shape.split('/')
-      middle_of_row = len(self.grid[1]) / 2
-      self.grid[1][middle_of_row:middle_of_row + len(shape)] = shape
-      self.shape_movement(1)
+    shape_num = random.randint(0, len(self.level['shape']) - 1)
+    shape = self.level['shape'][shape_num]
+    shape = shape.split('/')
+    middle_of_row = len(self.grid[1]) / 2
+    self.grid[1][middle_of_row:middle_of_row + len(shape)] = shape
+    self.draw()
+    return self.shape_movement(1)
       
   def shape_movement(self, current_row):
 	next_row = current_row + 1
@@ -122,7 +123,6 @@ class GridClass():
 	  return True
 	else:
 	  return self.shape_movement(next_row)
-      self.shape_movement()
 
 def select_level():
     print '            S E L E C T   A   D I F F I C U L T Y :            '
@@ -178,11 +178,17 @@ def print_menu():
         print '[!] Unrecognized Input!'
         return 3
 
+def start_process(difficulty):
+  game_status = 0
+  grid = GridClass(level=difficulty)
+  while game_status != 1:
+    process = grid.spawn_shape()
+
 while running:
     choice = print_menu()
     if choice == 1:
         level = select_level()
-        start_process()
+        start_process(level)
     elif choice == 3:
         show_highscores()
     if choice == 3:
