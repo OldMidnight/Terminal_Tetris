@@ -241,3 +241,9 @@ if __name__ == '__main__':
 #test          
 
 '''
+
+def gameover():
+  name = raw_input('Please enter name:\n')
+  #score
+  with open ('highscore', 'a') as f:
+    print name, 'score'
