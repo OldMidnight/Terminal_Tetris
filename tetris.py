@@ -95,6 +95,11 @@ class GridClass():
       self.grid[i].append("|")
       i = i + 1
     self.grid.append(("_" * self.size))
+    #self.level_dict = GridClass.level_dict
+    #self.next_shape = GridClass.next_shape
+    #self.points = GridClass.points
+    #self.incoming_shape = GridClass.incoming_shape
+    #self.row_sorted = GridClass.row_sorted
 
   def draw(self):
     '''
