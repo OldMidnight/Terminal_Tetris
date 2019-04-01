@@ -35,6 +35,11 @@ class GridClass():
   grid: The initial empty list for the grid
   size: Defines the width of the grid
   level: Defines the current level of the grid instance
+def gameover():
+  name = raw_input('Please enter name:\n')
+  #score
+  with open ('highscore', 'a') as f:
+    print name, 'score'
 
   Attributes include:
   level_dict: A dictionary containing a key-value relationship between a level and an object containing the properties of that level
@@ -206,12 +211,16 @@ class GridClass():
     if '.' in self.grid[1]:
       return [1]
     else:
-      i = 1
-      while i < len(self.grid) - 1:
-        if ' ' not in self.grid[i]:
-          return [2, i]
-        i += 1
-      return [0]
+        i = 1
+        while i < len(self.grid):
+            if ' ' not in self.grid[i]:
+                return [2, i]
+            i += 1
+        return [0]
+  def gameover(self):
+    name = raw_input('Please enter name:\n')
+    with open ('highscore', 'a') as f:
+      print 'name', self.points
 
 def select_level():
   selected_level = 0
@@ -309,6 +318,7 @@ while running:
         show_highscores()
     if choice == 3:
         running = False
+
 
 ''' Testing
 if __name__ == '__main__':
