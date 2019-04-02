@@ -244,7 +244,7 @@ class GridClass():
         if name:
           if len(name) >= 4:
             with open ('scores.txt', 'a+') as f:
-              f.write(name + ':' + str(self.points))
+              f.write(name + ':' + str(self.points) + ':' + str(self.level))
             score_added = True
           else:
             print colors_dict['RED'] + '[!] Name Too Short! Name must be atleast 4 characters.' + colors_dict['NONE']
@@ -347,7 +347,16 @@ def show_highscores():
       line = line.strip().split(':')
       username = line[0]
       score = line[1]
-      print (colors_dict['BLUE'] + username + colors_dict['NONE'] + ' - ' + colors_dict['GREEN'] + score + colors_dict['NONE']).center(int(get_term_column_length()))
+      difficulty = line[3]
+      if difficulty == 1:
+        difficulty = 'Easy'
+      elif difficulty == 2:
+        difficulty = 'Medium'
+      elif difficulty == 3:
+        difficulty = 'Hard'
+      elif difficulty == 4:
+        difficulty = "You Can't Win"
+      print (colors_dict['BLUE'] + username + colors_dict['NONE'] + ' - ' + colors_dict['GREEN'] + score + colors_dict['NONE'] + ' - ' + colors_dict['PURPLE'] + 'Difficulty: ' + difficulty + colors_dict['NONE']).center(int(get_term_column_length()))
   close = raw_input()
   if close:
     return
