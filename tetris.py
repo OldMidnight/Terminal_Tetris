@@ -59,19 +59,23 @@ class GridClass():
   level_dict = {
     1: {
       'shape': [".", "./.", "././."],
-      'speed': 0.75
+      'speed': 0.75,
+      'level': 'Easy'
     },
     2: {
       'shape': ["././.", "./././.", "././././."],
-      'speed': 0.5
+      'speed': 0.5,
+      'level': 'Medium'
     },
     3: {
       'shape': ["././././.", "./././././.", "././././././."],
-      'speed': 0.25
+      'speed': 0.25,
+      'level': 'Hard'
     },
     4: {
       'shape': ["././././././.", "./././././././."],
-      'speed': 0.01
+      'speed': 0.01,
+      'level': "You Can't Win"
     },
   }
   next_shape = False
@@ -180,10 +184,6 @@ class GridClass():
       for a in range(shape_start_index - 1, shape_end_index + 1):
         if self.grid[current_row][a] != '|':
           self.grid[current_row][a] = ' '
-      # temp_row = self.grid[next_row]
-      # self.grid[next_row] = self.grid[current_row]
-      # self.grid[current_row] = temp_row
-      # time.sleep(self.level['speed'])
       self.draw()
 
       move, o, e = select([sys.stdin], [], [], self.level['speed'])
@@ -244,7 +244,7 @@ class GridClass():
         if name:
           if len(name) >= 4:
             with open ('scores.txt', 'a+') as f:
-              f.write(name + ':' + str(self.points) + ':' + str(self.level))
+              f.write(name + ':' + str(self.points) + ':' + self.level['level'])
             score_added = True
           else:
             print colors_dict['RED'] + '[!] Name Too Short! Name must be atleast 4 characters.' + colors_dict['NONE']
