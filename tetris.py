@@ -318,9 +318,24 @@ def show_game_over():
   print colors_dict['RED'] + "  \   \_/  /  /   /  /  /  /  /  /  /  /______       \         /\   \__/  /  /______ /  / \   \    ".center(int(get_term_column_length())) + colors_dict['NONE']
   print colors_dict['RED'] + "   \______/__/   /__/__/  /__/  /__/_________/        \_______/  \_______/_________//__/   \___\   ".center(int(get_term_column_length())) + colors_dict['NONE']
 
+def read_hi_score():
+  hi_score_list = []
+  with open(highscores.txt, 'r') as f:
+    for line in f:
+      hi_score_list.append(line)
+  return hi_score_list
+
+def show_hi_scores(hi_score_list):
+  print colors_dict['PURPLE'] + "      ___    _______________   ___     ___________   _________________      ______   _________________  ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']    
+  print colors_dict['PURPLE'] + "     / /    / /   /   ____/   / /     /    ____ /  /  _____//   ____  \    /  __  \ /  ______/   ____/  ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+  print colors_dict['PURPLE'] + "    / -----/ /  //   /  ___  /  -----/ / \  \__   /  /     /   /    /  \  /  / /  /  /______  \  \__    ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+  print colors_dict['PURPLE'] + "   /  ____  /  / \   \  \  \/  -----  /   \    \/  /       \       /    \/  _    /   _____ /   \     \  ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+  print colors_dict['PURPLE'] + "  / /    / /  /   \   \_/  / /     / /_ ___/  /    \ _____   \             / \  \   /_____  __ /     /  ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+  print colors_dict['PURPLE'] + " /_/    /_/__/     \______/_/     /_/_______/   \________/    \_______//__/   \___\_______/_________/   ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
 
 while running:
     choice = print_menu()
+    hi_score_list = read_hi_score()
     if choice == 1:
         level = select_level()
         start_process(level)
@@ -328,7 +343,7 @@ while running:
         time.sleep(5)
         running = False
     elif choice == 2:
-        show_highscores()
+        show_hi_scores(hi_score_list)
     if choice == 3:
         running = False
 
