@@ -231,9 +231,25 @@ class GridClass():
         return [0]
   
   def gameover(self):
-    name = raw_input('Please enter name:\n')
-    with open ('highscore', 'a') as f:
-      f.write(name, self.points)
+    print colors_dict['RED'] + "   ________    ______    _________________________    _________    ____    _____________ ______    ".center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['RED'] + "  /  _____/   / __   \  /  ___   ___   /  _______/   /   ____  \  /   /   /  /  _______//  __  \   ".center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['RED'] + " /  /   ___  / /__    \/  /  /  /  /  /  /______    /   /    /  \/   /   /  /  /______ /  / /  /   ".center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['RED'] + " \   \  \  \/  ___    /  /  /  /  /  /  _______/    \       /   /   /   /  /  _______//  _    /    ".center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['RED'] + "  \   \_/  /  /   /  /  /  /  /  /  /  /______       \         /\   \__/  /  /______ /  / \   \    ".center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['RED'] + "   \______/__/   /__/__/  /__/  /__/_________/        \_______/  \_______/_________//__/   \___\   ".center(int(get_term_column_length())) + colors_dict['NONE']
+    if self.points != 0:
+      score_added = False
+      while score_added == False:
+        name = raw_input('Please enter name:\n')
+        if name:
+          if len(name) >= 4:
+            with open ('scores.txt', 'a+') as f:
+              f.write(name + ':' + str(self.points))
+            score_added = True
+          else:
+            print colors_dict['RED'] + '[!] Name Too Short! Name must be atleast 4 characters.' + colors_dict['NONE']
+        else:
+          print colors_dict['RED'] + '[!] Unrecognized Input.' + colors_dict['NONE']
 
 def select_level():
   selected_level = 0
@@ -308,44 +324,44 @@ def start_process(difficulty):
       grid.remove_point_row(status[1])
       grid.row_sorted = False
       game_status = 0
+  grid.gameover()
   return game_status
 
-def show_game_over():
-  print colors_dict['RED'] + "   ________    ______    _________________________    _________    ____    _____________ ______    ".center(int(get_term_column_length())) + colors_dict['NONE']
-  print colors_dict['RED'] + "  /  _____/   / __   \  /  ___   ___   /  _______/   /   ____  \  /   /   /  /  _______//  __  \   ".center(int(get_term_column_length())) + colors_dict['NONE']
-  print colors_dict['RED'] + " /  /   ___  / /__    \/  /  /  /  /  /  /______    /   /    /  \/   /   /  /  /______ /  / /  /   ".center(int(get_term_column_length())) + colors_dict['NONE']
-  print colors_dict['RED'] + " \   \  \  \/  ___    /  /  /  /  /  /  _______/    \       /   /   /   /  /  _______//  _    /    ".center(int(get_term_column_length())) + colors_dict['NONE']
-  print colors_dict['RED'] + "  \   \_/  /  /   /  /  /  /  /  /  /  /______       \         /\   \__/  /  /______ /  / \   \    ".center(int(get_term_column_length())) + colors_dict['NONE']
-  print colors_dict['RED'] + "   \______/__/   /__/__/  /__/  /__/_________/        \_______/  \_______/_________//__/   \___\   ".center(int(get_term_column_length())) + colors_dict['NONE']
-
-def read_hi_score():
-  hi_score_list = []
-  with open(highscores.txt, 'r') as f:
-    for line in f:
-      hi_score_list.append(line)
-  return hi_score_list
-
-def show_hi_scores(hi_score_list):
-  print colors_dict['PURPLE'] + "      ___    _______________   ___     ___________   _________________      ______   _________________  ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']    
-  print colors_dict['PURPLE'] + "     / /    / /   /   ____/   / /     /    ____ /  /  _____//   ____  \    /  __  \ /  ______/   ____/  ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print colors_dict['PURPLE'] + "    / -----/ /  //   /  ___  /  -----/ / \  \__   /  /     /   /    /  \  /  / /  /  /______  \  \__    ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print colors_dict['PURPLE'] + "   /  ____  /  / \   \  \  \/  -----  /   \    \/  /       \       /    \/  _    /   _____ /   \     \  ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print colors_dict['PURPLE'] + "  / /    / /  /   \   \_/  / /     / /_ ___/  /    \ _____   \             / \  \   /_____  __ /     /  ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print colors_dict['PURPLE'] + " /_/    /_/__/     \______/_/     /_/_______/   \________/    \_______//__/   \___\_______/_________/   ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+def show_highscores():
+  os.system("clear")
+  print colors_dict['PURPLE'] + "      ___     ___ ___ ________    ___      ___________   _________________     ______   _________________  ".center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['PURPLE'] + "     /  /    /  //  //   ____/   /  /     /  /   ____/  /  _____//   ____  \  /  __  \ /  ______/   ____/  ".center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['PURPLE'] + "    /  /____/  //  //   /  ___  /  /_____/  / \  \__   /  /     /   /    /  \/  / /  //  /____  \  \__     ".center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['PURPLE'] + "   /  ____    //  / \   \  \  \/  ______   /   \    \ /  /       \      /   /  _    //   ____/   \_    \   ".center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['PURPLE'] + "  /  /    /  //  /   \   \_/  /  /     /  /_ ___/  /  \  \ _____  \        /  / \  \/   /____ ____/    /   ".center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['PURPLE'] + " /__/    /__//__/     \______/__/     /__/________/    \________/  \______/__/   \__\_______//________/    ".center(int(get_term_column_length())) + colors_dict['NONE']
+  print ''
+  print colors_dict['YELLOW'] + '_______________________________________________________________'.center(int(get_term_column_length())) + colors_dict['NONE']
+  print ''
+  with open('scores.txt') as f:
+    lines = f.readlines()
+  if len(lines) == 0:
+    print (colors_dict['RED'] + 'N O   H I G H S C O R E S   Y E T !' + colors_dict['NONE']).center(int(get_term_column_length()))
+  else:
+    for line in lines:
+      line = line.strip().split(':')
+      username = line[0]
+      score = line[1]
+      print (colors_dict['BLUE'] + username + colors_dict['NONE'] + ' - ' + colors_dict['GREEN'] + score + colors_dict['NONE']).center(int(get_term_column_length()))
+  close = raw_input()
+  if close:
+    return
 
 while running:
     choice = print_menu()
-    hi_score_list = read_hi_score()
     if choice == 1:
-        level = select_level()
-        start_process(level)
-        show_game_over()
-        time.sleep(5)
-        running = False
+      level = select_level()
+      start_process(level)
+      running = False
     elif choice == 2:
-        show_hi_scores(hi_score_list)
+      show_highscores()
     if choice == 3:
-        running = False
+      running = False
 
 
 ''' Testing
