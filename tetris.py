@@ -8,14 +8,22 @@ Moses Opebi
 Tevin Thomas
 '''
 
-# Global Variables
-running = True
-
 import random
 import os
 import time
 from select import select
 import sys
+
+
+# Global Variables
+running = True
+
+def get_term_column_length():
+  try:
+    cols = os.environ['COLUMNS']
+  except KeyError:
+    cols = 25
+  return cols
 
 colors_dict = {
   'RED': '\033[31m',
@@ -35,11 +43,6 @@ class GridClass():
   grid: The initial empty list for the grid
   size: Defines the width of the grid
   level: Defines the current level of the grid instance
-def gameover():
-  name = raw_input('Please enter name:\n')
-  #score
-  with open ('highscore', 'a') as f:
-    print name, 'score'
 
   Attributes include:
   level_dict: A dictionary containing a key-value relationship between a level and an object containing the properties of that level
@@ -99,7 +102,7 @@ def gameover():
         j = j + 1
       self.grid[i].append("|")
       i = i + 1
-    self.grid.append(("_" * self.size))
+    self.grid.append(("-" * self.size))
     #self.level_dict = GridClass.level_dict
     #self.next_shape = GridClass.next_shape
     #self.points = GridClass.points
@@ -111,10 +114,10 @@ def gameover():
     The draw function of the grid. Anytime this function is called, the screen will be cleared and an updated grid will be redrawn.
     '''
     os.system('clear')
-    print colors_dict['GREEN'] + str('S C O R E: ' + str(self.points)).center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+    print colors_dict['GREEN'] + str('S C O R E: ' + str(self.points)).center(int(get_term_column_length()))
     for row in self.grid:
-      print "".join(row).center(int(os.environ['COLUMNS']))
-    print colors_dict['BLUE'] + str('I N C O M I N G   S H A P E: ' + "".join(self.incoming_shape)).center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+      print "".join(row).center(int(get_term_column_length()))
+    print colors_dict['BLUE'] + str('I N C O M I N G   S H A P E: ' + "".join(self.incoming_shape)).center(int(get_term_column_length()))
 
   def spawn_shape(self):
     '''
@@ -151,7 +154,13 @@ def gameover():
     next_color = colors_dict[color]
     self.incoming_shape = (next_color + self.level['shape'][next_shape_num] + colors_dict['NONE']).split('/')
     middle_of_row = len(self.grid[1]) / 2
-    self.grid[1][middle_of_row:middle_of_row + len(shape)] = shape
+    temp_row = self.grid[1]
+    for a in range(middle_of_row, middle_of_row + len(shape)):
+      temp_row[a] = '.'
+      #self.grid[2][a] = ' '
+    self.grid[1] = temp_row
+    # self.grid[1][middle_of_row:middle_of_row + len(shape)] = shape
+    
     self.draw()
     return self.shape_movement(1, middle_of_row, middle_of_row + len(shape), current_color)
       
@@ -197,11 +206,14 @@ def gameover():
 
   def remove_point_row(self, row_to_sort):
     if row_to_sort == 1:
-      for a in range(1, len(self.grid[row_to_sort]) - 1):
+      for a in range(1, len(self.grid[1]) - 1):
         self.grid[row_to_sort][a] = ' '
       self.row_sorted = True
     else:
-      self.grid[row_to_sort] = self.grid[row_to_sort - 1]
+      temp_row = []
+      for i in self.grid[row_to_sort - 1]:
+        temp_row.append(i)
+      self.grid[row_to_sort] = temp_row
     if self.row_sorted:
       return True
     else:
@@ -212,41 +224,42 @@ def gameover():
       return [1]
     else:
         i = 1
-        while i < len(self.grid):
+        while i < len(self.grid) - 1:
             if ' ' not in self.grid[i]:
                 return [2, i]
             i += 1
         return [0]
+  
   def gameover(self):
     name = raw_input('Please enter name:\n')
     with open ('highscore', 'a') as f:
-      print 'name', self.points
+      f.write(name, self.points)
 
 def select_level():
   selected_level = 0
-  print colors_dict['BLUE'] + 'S E L E C T   A   D I F F I C U L T Y :'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print ''.center(int(os.environ['COLUMNS']))
-  print colors_dict['GREEN'] +  '    [1]        E A S Y                    '.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print colors_dict['YELLOW'] + '    [2]        M E D I U M                '.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print colors_dict['RED'] +    '    [3]        H A R D                    '.center(int(os.environ['COLUMNS']))
-  print colors_dict['PURPLE'] + '    [4]        Y O U   W O N T   W I N    '.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print ''.center(int(os.environ['COLUMNS']))
+  print colors_dict['BLUE'] + 'S E L E C T   A   D I F F I C U L T Y :'.center(int(get_term_column_length())) + colors_dict['NONE']
+  print ''.center(int(get_term_column_length()))
+  print colors_dict['GREEN'] +  '    [1]        E A S Y                    '.center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['YELLOW'] + '    [2]        M E D I U M                '.center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['RED'] +    '    [3]        H A R D                    '.center(int(get_term_column_length()))
+  print colors_dict['PURPLE'] + '    [4]        Y O U   W O N T   W I N    '.center(int(get_term_column_length())) + colors_dict['NONE']
+  print ''.center(int(get_term_column_length()))
   while selected_level == 0:
     level = raw_input('[ENTER]: ')
     if level == '1':
-      print colors_dict['GREEN'] + 'Taking it easy huh?'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+      print colors_dict['GREEN'] + 'Taking it easy huh?'.center(int(get_term_column_length())) + colors_dict['NONE']
       time.sleep(2)
       selected_level = 1
     elif level == '2':
-      print colors_dict['YELLOW'] + 'Not much of a challenge really.'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+      print colors_dict['YELLOW'] + 'Not much of a challenge really.'.center(int(get_term_column_length())) + colors_dict['NONE']
       time.sleep(2)
       selected_level = 2
     elif level == '3':
-      print colors_dict['RED'] + "That's More like it!".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+      print colors_dict['RED'] + "That's More like it!".center(int(get_term_column_length())) + colors_dict['NONE']
       time.sleep(2)
       selected_level = 3
     elif level == '4':
-      print colors_dict['PURPLE'] + 'Abandon hope all ye who have chosen this option...'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+      print colors_dict['PURPLE'] + 'Abandon hope all ye who have chosen this option...'.center(int(get_term_column_length())) + colors_dict['NONE']
       time.sleep(2)
       selected_level = 4
     else:
@@ -257,25 +270,25 @@ def select_level():
 
 def print_menu():
     os.system('clear')
-    print colors_dict['GREEN'] + "       ______    ________    ________________     ___ _______    ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['GREEN'] + "      /      \  /        \  /         /  __  \   /  //  ____/    ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['GREEN'] + "     /  ____  \/   _____  \/___   ___/  / /  /  /  / \  \__      ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['GREEN'] + "    /  /   /  /\  /    /  /  /   /  /  _    /  /  /   \    \     ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['GREEN'] + "   /         /  \        /  /   /  /  / \  \  /  / ___/    /     ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['GREEN'] + "  /_________/    \______/  /___/  /__/   \__\/__/ /_______/      ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print ''.center(int(os.environ['COLUMNS']))
-    print colors_dict['GREEN'] + 'C A 2 7 8   P R O J E C T'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['YELLOW'] + '_______________________________________________________________'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['BLUE'] + 'M A D E   B Y :'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['BLUE'] + 'F A R E E D   I D R I S'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['BLUE'] + 'M O S E S   O P E B I'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['BLUE'] + 'K E V I N   D O Y L E'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['BLUE'] + 'T E V I N   T H O M A S'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['YELLOW'] + '_______________________________________________________________'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print ''.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['GREEN'] + '[1] New Game      [2] Highscores'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print colors_dict['GREEN'] + '[3] Quit'.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-    print ''.center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+    print colors_dict['GREEN'] + "       ______    ________    ________________     ___ _______    ".center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['GREEN'] + "      /      \  /        \  /         /  __  \   /  //  ____/    ".center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['GREEN'] + "     /  ____  \/   _____  \/___   ___/  / /  /  /  / \  \__      ".center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['GREEN'] + "    /  /   /  /\  /    /  /  /   /  /  _    /  /  /   \    \     ".center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['GREEN'] + "   /         /  \        /  /   /  /  / \  \  /  / ___/    /     ".center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['GREEN'] + "  /_________/    \______/  /___/  /__/   \__\/__/ /_______/      ".center(int(get_term_column_length())) + colors_dict['NONE']
+    print ''.center(int(get_term_column_length()))
+    print colors_dict['GREEN'] + 'C A 2 7 8   P R O J E C T'.center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['YELLOW'] + '_______________________________________________________________'.center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['BLUE'] + 'M A D E   B Y :'.center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['BLUE'] + 'F A R E E D   I D R I S'.center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['BLUE'] + 'M O S E S   O P E B I'.center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['BLUE'] + 'K E V I N   D O Y L E'.center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['BLUE'] + 'T E V I N   T H O M A S'.center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['YELLOW'] + '_______________________________________________________________'.center(int(get_term_column_length())) + colors_dict['NONE']
+    print ''.center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['GREEN'] + '[1] New Game      [2] Highscores'.center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['GREEN'] + '[3] Quit'.center(int(get_term_column_length())) + colors_dict['NONE']
+    print ''.center(int(get_term_column_length())) + colors_dict['NONE']
     option = input('[ENTER]: ')
     if option in [1, 2, 3]:
         return option
@@ -298,12 +311,12 @@ def start_process(difficulty):
   return game_status
 
 def show_game_over():
-  print colors_dict['RED'] + "   ________    ______    _________________________    _________    ____    _____________ ______    ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print colors_dict['RED'] + "  /  _____/   / __   \  /  ___   ___   /  _______/   /   ____  \  /   /   /  /  _______//  __  \   ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print colors_dict['RED'] + " /  /   ___  / /__    \/  /  /  /  /  /  /______    /   /    /  \/   /   /  /  /______ /  / /  /   ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print colors_dict['RED'] + " \   \  \  \/  ___    /  /  /  /  /  /  _______/    \       /   /   /   /  /  _______//  _    /    ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print colors_dict['RED'] + "  \   \_/  /  /   /  /  /  /  /  /  /  /______       \         /\   \__/  /  /______ /  / \   \    ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
-  print colors_dict['RED'] + "   \______/__/   /__/__/  /__/  /__/_________/        \_______/  \_______/_________//__/   \___\   ".center(int(os.environ['COLUMNS'])) + colors_dict['NONE']
+  print colors_dict['RED'] + "   ________    ______    _________________________    _________    ____    _____________ ______    ".center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['RED'] + "  /  _____/   / __   \  /  ___   ___   /  _______/   /   ____  \  /   /   /  /  _______//  __  \   ".center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['RED'] + " /  /   ___  / /__    \/  /  /  /  /  /  /______    /   /    /  \/   /   /  /  /______ /  / /  /   ".center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['RED'] + " \   \  \  \/  ___    /  /  /  /  /  /  _______/    \       /   /   /   /  /  _______//  _    /    ".center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['RED'] + "  \   \_/  /  /   /  /  /  /  /  /  /  /______       \         /\   \__/  /  /______ /  / \   \    ".center(int(get_term_column_length())) + colors_dict['NONE']
+  print colors_dict['RED'] + "   \______/__/   /__/__/  /__/  /__/_________/        \_______/  \_______/_________//__/   \___\   ".center(int(get_term_column_length())) + colors_dict['NONE']
 
 
 while running:
@@ -314,7 +327,7 @@ while running:
         show_game_over()
         time.sleep(5)
         running = False
-    elif choice == 3:
+    elif choice == 2:
         show_highscores()
     if choice == 3:
         running = False
