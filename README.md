@@ -1,18 +1,16 @@
-Tetris:
-1. Create Shapes
-2. Create Grid
-3. Logic for Stopping Shape
-4. Logic for Dropping Shape
-5. Logic for drop timer
-6. Logic for gameover
-7. Start Menu
-8. Options for grid size
+DOTris: Modified Tetris
 
+A terminal based parody of Tetris.
+Instead of shape, series of dots drop
 
-example shape:
-----
-|  |
-|  |
-|  |
-|  |
-----
+How To Play:
+A - Move left
+D - Move Right
+
+You must press 'enter' immediately after pressing a butting for your input to register.
+
+Authors:
+Fareed Idris
+Moses Opebi
+Kevin Doyle
+Tevin Thomas

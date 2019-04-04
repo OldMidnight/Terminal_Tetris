@@ -131,17 +131,6 @@ class GridClass():
     The shape is then split by the '/' that separates the dots and returned as a list.
     The midpoint of the top row of the grid is then calculated. This point is where the first dot of the shape will appear
     The positions from the midpoint of the top row to the length pf the shape is made equal to the shape.
-    Below is what that operation would result in:
-
-    top_row                          shape
-      0    1    2    3    4    5 
-    [' ', ' ', ' ', ' ', ' ', ' ']   ['.', '.', '.']
-
-    midpoint = 2
-    len(shape) - 1 = 2
-    top_row[midpoint:midpoint + len(shape) - 1] = shape
-
-    top_row = [' ', ' ', '.', '.', '.', ' ']
     '''
     self.next_shape = False
 
@@ -166,9 +155,9 @@ class GridClass():
     # self.grid[1][middle_of_row:middle_of_row + len(shape)] = shape
     
     self.draw()
-    return self.shape_movement(1, middle_of_row, middle_of_row + len(shape), current_color)
+    return self.shape_movement(1, middle_of_row, middle_of_row + len(shape))
       
-  def shape_movement(self, current_row, shape_start_index, shape_end_index, color):
+  def shape_movement(self, current_row, shape_start_index, shape_end_index):
     next_row = current_row + 1
     if next_row == len(self.grid) - 1:
       self.next_shape = True
@@ -190,11 +179,11 @@ class GridClass():
 
       if (move):
         direction = sys.stdin.readline().strip()
-        if direction == 'd':
+        if direction == 'd' or direction == 'D':
           if self.grid[next_row][shape_end_index] == ' ':
             shape_end_index = shape_end_index + 1
             shape_start_index = shape_start_index + 1
-        elif direction == 'a':
+        elif direction == 'a' or direction == 'A':
           if self.grid[next_row][shape_start_index - 1] == ' ':
             shape_end_index = shape_end_index - 1
             shape_start_index = shape_start_index - 1
@@ -202,9 +191,17 @@ class GridClass():
     if self.next_shape:
       return True
     else:
-      self.shape_movement(next_row, shape_start_index, shape_end_index, color)
+      self.shape_movement(next_row, shape_start_index, shape_end_index)
 
   def remove_point_row(self, row_to_sort):
+    '''
+    This function is used to remove a row that has been filled with dots, meaning a point can be gained. The function also adjusts the entire grid so that
+    all rows above the completed row is moved a row down.
+    a temporary variable is created to store the row above the current row being adusted. this ensures that self.grid[row_to_sort] does not become a reference to a different row.
+    no using a temporary row will cause 2 shapes being created on the next spawn.
+    arguments passed:
+    row_to_sort: This is an integer that indicates the number of the row to be removed
+    '''
     if row_to_sort == 1:
       for a in range(1, len(self.grid[1]) - 1):
         self.grid[row_to_sort][a] = ' '
@@ -303,14 +300,14 @@ def print_menu():
     print colors_dict['YELLOW'] + '_______________________________________________________________'.center(int(get_term_column_length())) + colors_dict['NONE']
     print ''.center(int(get_term_column_length())) + colors_dict['NONE']
     print colors_dict['GREEN'] + '[1] New Game      [2] Highscores'.center(int(get_term_column_length())) + colors_dict['NONE']
-    print colors_dict['GREEN'] + '[3] Quit'.center(int(get_term_column_length())) + colors_dict['NONE']
+    print colors_dict['GREEN'] + '[3] How To Play   [4] Quit'.center(int(get_term_column_length())) + colors_dict['NONE']
     print ''.center(int(get_term_column_length())) + colors_dict['NONE']
     option = input('[ENTER]: ')
-    if option in [1, 2, 3]:
+    if option in [1, 2, 3, 4]:
         return option
     else:
         print colors_dict['RED'] + '[!] Unrecognized Input!' + colors_dict['NONE']
-        return 3
+        return 4
 
 def start_process(difficulty):
   game_status = 0
@@ -361,6 +358,22 @@ def show_highscores():
   if close:
     return
 
+def show_how_to():
+  os.system('clear')
+  print colors_dict['BLUE'] + "How To Play DOTris:".center(int(get_term_column_length())) + colors_dict['NONE']
+  print ''
+  print colors_dict['YELLOW'] + '____________________________________________________________________'.center(int(get_term_column_length())) + colors_dict['NONE']
+  print ''
+  print colors_dict['GREEN'] + 'Movement'.center(int(get_term_column_length())) + colors_dict['NONE']
+  print ''
+  print (colors_dict['GREEN'] + 'A/a' + colors_dict['NONE'] + ' - Move Left').center(int(get_term_column_length())) + colors_dict['NONE']
+  print (colors_dict['GREEN'] + 'D/d' + colors_dict['NONE'] + ' - Move Right').center(int(get_term_column_length())) + colors_dict['NONE']
+  print ''
+  print colors_dict['RED'] + '[!] Y O U   M U S T   P R E S S   "E N T E R"   I M M E D I A T E L Y   A F T E R   P R E S S I N G   A    L E T T E R   F O R   Y O U R   I N P U T   T O   R E G I S T E R ! ! !'.center(int(get_term_column_length())) + colors_dict['NONE']
+  close = raw_input()
+  if close:
+    return
+
 while running:
     choice = print_menu()
     if choice == 1:
@@ -369,17 +382,7 @@ while running:
       running = False
     elif choice == 2:
       show_highscores()
-    if choice == 3:
+    elif choice == 3:
+      show_how_to()
+    elif choice == 4:
       running = False
-
-
-''' Testing
-if __name__ == '__main__':
-  grid = GridClass(level=4)
-  grid.draw()
-  grid.spawn_shape()
-  grid.draw()
-
-#test          
-
-'''
