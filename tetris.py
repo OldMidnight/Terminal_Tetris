@@ -29,7 +29,7 @@ colors_dict = {
   'RED': '\033[31m',
   'GREEN': '\033[32;1m',
   'BLUE': '\033[34;1m',
-  'YELLOW': '\033[33;1m',
+  'YELLOW': '\033[33;1m',                                
   'PURPLE': '\033[35;1m',
   'NONE': '\033[0m'
 }
@@ -74,7 +74,7 @@ class GridClass():
     },
     4: {
       'shape': ["././././././.", "./././././././."],
-      'speed': 0.01,
+      'speed': 0.1,
       'level': "You Can't Win"
     },
   }
@@ -196,7 +196,7 @@ class GridClass():
   def remove_point_row(self, row_to_sort):
     '''
     This function is used to remove a row that has been filled with dots, meaning a point can be gained. The function also adjusts the entire grid so that
-    all rows above the completed row is moved a row down.
+    all rows above the completed row is moved a row down.:q
     a temporary variable is created to store the row above the current row being adusted. this ensures that self.grid[row_to_sort] does not become a reference to a different row.
     no using a temporary row will cause 2 shapes being created on the next spawn.
     arguments passed:
@@ -217,6 +217,7 @@ class GridClass():
       return self.remove_point_row(row_to_sort - 1)
 
   def check_status(self):
+    # [game_status, row_to_remove] or [game_status]
     if '.' in self.grid[1]:
       return [1]
     else:
@@ -240,7 +241,7 @@ class GridClass():
         name = raw_input('Please enter name:\n')
         if name:
           if len(name) >= 4:
-            with open ('scores.txt', 'a+') as f:
+            with open ('scores.txt', 'w') as f:
               f.write(name + ':' + str(self.points) + ':' + self.level['level'])
             score_added = True
           else:
@@ -311,6 +312,7 @@ def print_menu():
 
 def start_process(difficulty):
   game_status = 0
+  # Creates Instance of GridClass
   grid = GridClass(level=difficulty)
   while game_status == 0:
     grid.spawn_shape()
@@ -344,7 +346,7 @@ def show_highscores():
       line = line.strip().split(':')
       username = line[0]
       score = line[1]
-      difficulty = line[3]
+      difficulty = line[2]
       if difficulty == 1:
         difficulty = 'Easy'
       elif difficulty == 2:
